@@ -2,7 +2,7 @@ ExcelPlus
 ===
 ExcelPlus is a java library that can be used to convert the data in excel file to Jave Objects.You can read the data from excel file to Jave Objects and also can write the Java Object to Excel file.
 
-*intergrate the java valification <br> 
+* intergrate the java valification <br> 
 **support the field of Java Object which is user define class <br> 
 **support both the annotation and config  <br> 
 **one sheet to one Java Object <br> 
