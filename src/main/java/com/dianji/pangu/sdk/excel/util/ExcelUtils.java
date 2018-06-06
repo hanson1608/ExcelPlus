@@ -7,6 +7,7 @@
  */
 package com.dianji.pangu.sdk.excel.util;
 
+import com.alibaba.fastjson.JSONArray;
 import com.dianji.pangu.sdk.excel.common.ErrorMessage;
 import com.dianji.pangu.sdk.excel.common.ExcelException;
 import com.dianji.pangu.sdk.excel.common.SheetConfig;
@@ -276,6 +277,105 @@ public class ExcelUtils {
         List<T> entityList;
         try {
             entityList = readExcel.read(typeReference, sheetConfig, sheetIndex,errorMsgs);
+        }finally {
+            readExcel.close();
+        }
+        return entityList;
+    }
+    /**
+     * 从excel文件中读取数据转换成实体列表，读取和实体类注解名一样的sheet，没有则缺省第一sheet
+     * @param inputStream excel输入流
+     * @param sheetConfig sheet配置
+     * @return JSONArray
+     */
+    public static JSONArray readFromExcel(InputStream inputStream, SheetConfig sheetConfig)
+            throws IOException,ExcelException {
+        ExcelData readExcel = ExcelData.open(inputStream);
+        JSONArray data;
+        try{
+            data = readExcel.read(0,sheetConfig);
+        }finally {
+            readExcel.close();
+        }
+        return data;
+    }
+    /**
+     * 从excel文件中读取数据转换成实体列表，读取和实体类注解名一样的sheet，没有则缺省第一sheet
+     * @param filePath excel输入文件
+     * @param sheetConfig sheet配置
+     * @return JSONArray
+     */
+    public static JSONArray readFromExcel(String filePath, SheetConfig sheetConfig)
+            throws IOException,ExcelException {
+        try(InputStream inputStream = new FileInputStream(filePath)) {
+            return readFromExcel(inputStream, sheetConfig);
+        }
+    }
+    /**
+     * 从excel文件中读取数据转换成实体列表，读取和实体类注解名一样的sheet，没有则缺省第一sheet
+     * @param filePath excel输入文件
+     * @param typeReference 实体类参考类，支持泛型用
+     * @param sheetConfig sheet配置
+     * @param errorJson 存放返回的错误信息列表，null则不返回错误信息
+     * @return List 实体列表
+     */
+    public static <T> List<T> readFromExcel(String filePath,TypeReference<T> typeReference,SheetConfig sheetConfig,JSONArray errorJson)
+            throws IOException,InstantiationException,IllegalAccessException,ExcelException {
+        try(InputStream inputStream = new FileInputStream(filePath)) {
+            return readFromExcel(inputStream, typeReference, sheetConfig, 0,errorJson);
+        }
+
+    }
+    /**
+     * 从excel文件中读取数据转换成实体列表，读取和实体类注解名一样的sheet，没有则缺省第一sheet
+     * @param inputStream excel输入流
+     * @param typeReference 实体类参考类，支持泛型用
+     * @param sheetConfig sheet配置
+     * @param sheetIndex sheet索引号
+     * @param errorJson 存放返回的错误信息列表，null则不返回错误信息
+     * @return List 实体列表
+     */
+    public static <T> List<T> readFromExcel(InputStream inputStream,TypeReference<T> typeReference,SheetConfig sheetConfig, int sheetIndex,JSONArray errorJson)
+            throws IOException,InstantiationException,IllegalAccessException,ExcelException {
+        ExcelData readExcel = ExcelData.open(inputStream);
+        List<T> entityList;
+        try {
+            entityList = readExcel.read(typeReference, sheetConfig, sheetIndex,errorJson);
+        }finally {
+            readExcel.close();
+        }
+        return entityList;
+    }
+    /**
+     * 从excel文件中读取数据转换成实体列表，读取和实体类注解名一样的sheet，没有则缺省第一sheet
+     * @param filePath excel输入文件路径
+     * @param entityClass 实体类
+     * @param sheetConfig sheet配置
+     * @param errorJson 存放返回的错误信息列表，null则不返回错误信息
+     * @return List 实体列表
+     */
+    public static <T> List<T> readFromExcel(String filePath,Class<T> entityClass,SheetConfig sheetConfig,JSONArray errorJson)
+            throws IOException,InstantiationException,IllegalAccessException,ExcelException {
+        try(InputStream inputStream = new FileInputStream(filePath)) {
+            return readFromExcel(inputStream, entityClass, sheetConfig,0, errorJson);
+        }
+    }
+
+    /**
+     * 从excel文件中读取数据转换成实体列表，读取和实体类注解名一样的sheet，没有则缺省第一sheet
+     * @param inputStream excel输入流
+     * @param entityClass 实体类
+     * @param sheetConfig sheet配置
+     * @param sheetIndex sheet索引号
+     * @param jsonerror 存放返回的错误信息列表，null则不返回错误信息
+     * @return List 实体列表
+     */
+    public static <T> List<T> readFromExcel(InputStream inputStream,Class<T> entityClass,SheetConfig sheetConfig, int sheetIndex,JSONArray jsonerror)
+            throws IOException,InstantiationException,IllegalAccessException,ExcelException {
+        ExcelData readExcel = ExcelData.open(inputStream);
+        List<T> entityList;
+        try {
+            entityList = readExcel.read(entityClass, sheetConfig, sheetIndex,jsonerror);
         }finally {
             readExcel.close();
         }

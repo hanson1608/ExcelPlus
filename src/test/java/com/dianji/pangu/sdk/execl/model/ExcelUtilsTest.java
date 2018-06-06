@@ -1,6 +1,7 @@
 
 package com.dianji.pangu.sdk.execl.model;
 
+import com.alibaba.fastjson.JSONArray;
 import com.dianji.pangu.sdk.excel.common.ErrorMessage;
 import com.dianji.pangu.sdk.excel.common.ExcelDataFormatter;
 import com.dianji.pangu.sdk.excel.common.FieldTree;
@@ -18,9 +19,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
-import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -43,26 +42,28 @@ public class ExcelUtilsTest {
 
         String destFile = getSystemPath() + "d1.xlsx";
         String srcFile = getSystemPath() + "d1.xlsx";
-        data[0] = new Object[] {list,edf,srcFile,destFile};
+        data[0] = new Object[]{list, edf, srcFile, destFile};
         destFile = getSystemPath() + "d2.xlsx";
         srcFile = getSystemPath() + "d2.xlsx";
-        data[1] = new Object[] {list,null,srcFile,destFile};
+        data[1] = new Object[]{list, null, srcFile, destFile};
 
         return data;
     }
+
     /**
      * 制造测试数据 User对象列表
+     *
      * @return java.model.List<com.dianji.pangu.sdk.execl.common.Person>
      */
-    private List<Student> makeUsersForTest(){
+    private List<Student> makeUsersForTest() {
         School school = new School();
         school.setSchoolName("深圳第一高级中学");
         school.setAddress("深圳市福田区芝麻公寓");
-        SchoolMaster schoolMaster = new SchoolMaster("半仙","男");
+        SchoolMaster schoolMaster = new SchoolMaster("半仙", "男");
         school.setSchoolMaster(schoolMaster);
         List<Student> list = new ArrayList<>();
 
-        Student u= new Student();
+        Student u = new Student();
         u.setLocked(false);
         u.setTestFloat(2222f);
         u.setGrade(1);
@@ -109,18 +110,19 @@ public class ExcelUtilsTest {
 
     /**
      * 制造测试数据 User对象列表
+     *
      * @return java.model.List<com.dianji.pangu.sdk.execl.common.Person>
      */
-    private List<StudentT<Person,School>> makeStudentTsForTest(){
+    private List<StudentT<Person, School>> makeStudentTsForTest() {
         School school = new School();
         school.setSchoolName("深圳第一高级中学");
         school.setAddress("深圳市福田区芝麻公寓");
-        SchoolMaster schoolMaster = new SchoolMaster("半仙","男");
+        SchoolMaster schoolMaster = new SchoolMaster("半仙", "男");
         school.setSchoolMaster(schoolMaster);
-        List<StudentT<Person,School>> list = new ArrayList<>();
+        List<StudentT<Person, School>> list = new ArrayList<>();
         Person person = new Person();
 
-        StudentT<Person,School> u= new StudentT<Person,School>();
+        StudentT<Person, School> u = new StudentT<Person, School>();
         person.setLocked(false);
         person.setTestFloat(2222f);
         person.setXx(123.23);
@@ -131,7 +133,7 @@ public class ExcelUtilsTest {
         u.setObj(person);
         u.setVobj(school);
         list.add(u);
-        u= new StudentT<Person,School>();
+        u = new StudentT<Person, School>();
         u.setName("name2");
         u.setX(12);
         u.setObj(person);
@@ -143,57 +145,62 @@ public class ExcelUtilsTest {
 
     @Test
     public void testStudentTToFile() throws Exception {
-        List<StudentT<Person,School>> list = makeStudentTsForTest();
+        List<StudentT<Person, School>> list = makeStudentTsForTest();
 
         StringBuilder errormsg;
-        TypeReference<StudentT<Person,School>> typeReference = new TypeReference<StudentT<Person,School>>(){};
+        TypeReference<StudentT<Person, School>> typeReference = new TypeReference<StudentT<Person, School>>() {
+        };
         //测试工具封装类
-        errormsg = ExcelUtils.writeToExcel(getSystemPath()+"/t1.xlsx",list,typeReference,null);
+        errormsg = ExcelUtils.writeToExcel(getSystemPath() + "/t1.xlsx", list, typeReference, null);
 
     }
+
     /**
      * 获取系统当前路径
+     *
      * @return String 系统当前路径
      */
-    private String getSystemPath(){
+    private String getSystemPath() {
         Person u = new Person();
-        return  u.getClass().getResource("/").getFile();
+        return u.getClass().getResource("/").getFile();
     }
 
     /**
      * 根据字符串获取Data对象
+     *
      * @param str 字符串Date，"yyyyMMddHHmmss"
      * @return Date对象
      */
-    private Date getDateFromString(String str){
+    private Date getDateFromString(String str) {
         try {
             SimpleDateFormat s = new SimpleDateFormat("yyyyMMddHHmmss");
             return s.parse(str);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             return null;
         }
     }
 
     /**
      * 比较两个list 指定行对象值是否完全相同
-     * @param srcPeople 源UserList
-     * @param destPeople 目标UserList
+     *
+     * @param srcPeople   源UserList
+     * @param destPeople  目标UserList
      * @param srcStartNum 源开始行
      * @param dstStartNum 目标开始行
-     * @param count 行数
+     * @param count       行数
      * @return Boolean
      */
-    private Boolean compareUserList(List<Student> srcPeople, List<Student> destPeople, int srcStartNum, int dstStartNum, int count){
+    private Boolean compareUserList(List<Student> srcPeople, List<Student> destPeople, int srcStartNum, int dstStartNum, int count) {
 
-        if(dstStartNum+count > destPeople.size()) {
+        if (dstStartNum + count > destPeople.size()) {
             return false;
         }
-        if(srcStartNum+count > srcPeople.size()) {
+        if (srcStartNum + count > srcPeople.size()) {
             return false;
         }
-        for (int i = 0;i<count;i++){
-            System.out.println(srcPeople.get(i+srcStartNum).toString());
-            System.out.println(destPeople.get(i+srcStartNum).toString());
+        for (int i = 0; i < count; i++) {
+            System.out.println(srcPeople.get(i + srcStartNum).toString());
+            System.out.println(destPeople.get(i + srcStartNum).toString());
 //            if (!srcPeople.get(i+srcStartNum).toString().equals(destPeople.get(i+dstStartNum).toString())){
 //                return false;
 //            }
@@ -202,21 +209,21 @@ public class ExcelUtilsTest {
     }
 
     @Test(dataProvider = "test3")
-    public void testWriteToFile(List<Student> list,ExcelDataFormatter edf,String srcFile,String destFile) throws Exception {
+    public void testWriteToFile(List<Student> list, ExcelDataFormatter edf, String srcFile, String destFile) throws Exception {
         SheetConfig sheetconfig = new SheetConfig();
         sheetconfig.setTitleRow(1);
         sheetconfig.setDataBeginRow(4);
         sheetconfig.setEdf(edf);
-        Map<String,String> map= new HashMap<>();
-        map.put("age","年龄Long");
-        map.put("xx","Double测试");
-        map.put("school","");
-        map.put("school.schoolName","学校名称");
-        map.put("school.address","学校地址");
-        map.put("school.schoolMaster","");
-        map.put("school.schoolMaster.name","校长姓名");
-        map.put("school.schoolMaster.sex","校长性别");
-        map.put("name","姓名String");
+        Map<String, String> map = new HashMap<>();
+        map.put("age", "年龄Long");
+        map.put("xx", "Double测试");
+        map.put("school", "");
+        map.put("school.schoolName", "学校名称");
+        map.put("school.address", "学校地址");
+        map.put("school.schoolMaster", "");
+        map.put("school.schoolMaster.name", "校长姓名");
+        map.put("school.schoolMaster.sex", "校长性别");
+        map.put("name", "姓名String");
 //        sheetconfig.setFieldNameMap(map);
         OutputStream outputStream = new FileOutputStream(destFile);
         StringBuilder errormsg;
@@ -225,52 +232,57 @@ public class ExcelUtilsTest {
         //测试多次写
         ExcelData writeExcel = ExcelData.open(outputStream);
         try {
-            errormsg = writeExcel.write(list,null, sheetconfig);
+            errormsg = writeExcel.write(list, null, sheetconfig);
             System.out.print(errormsg.toString());
-            errormsg = writeExcel.write(list, null,sheetconfig);
+            errormsg = writeExcel.write(list, null, sheetconfig);
             System.out.print(errormsg.toString());
-        }finally{
+        } finally {
             writeExcel.close();
         }
 //        Assert.assertEquals(DigestUtils.md5Hex(new FileInputStream(srcFile)), (DigestUtils.md5Hex(new FileInputStream(destFile))));
 
     }
-    @Test(dataProvider = "test3")
-    public void testReadExcel(List<Student> srcList,ExcelDataFormatter edf,String srcFileName,String destFileName) throws Exception {
 
-        List<ErrorMessage> errorMsgs= new ArrayList<>();
+    @Test(dataProvider = "test3")
+    public void testReadExcel(List<Student> srcList, ExcelDataFormatter edf, String srcFileName, String destFileName) throws Exception {
+
+        List<ErrorMessage> errorMsgs = new ArrayList<>();
         SheetConfig sheetconfig = new SheetConfig();
         sheetconfig.setTitleRow(1);
         sheetconfig.setDataBeginRow(4);
         sheetconfig.setEdf(edf);
-        Map<String,String> map= new HashMap<>();
-        map.put("age","年龄Long");
-        map.put("xx","Double测试");
-        map.put("school","");
-        map.put("school.schoolName","学校名称");
-        map.put("school.address","学校地址");
-        map.put("school.schoolMaster","");
-        map.put("school.schoolMaster.name","校长姓名");
-        map.put("school.schoolMaster.sex","校长性别");
-        map.put("name","姓名String");
+        Map<String, String> map = new HashMap<>();
+        map.put("age", "年龄Long");
+        map.put("xx", "Double测试");
+        map.put("school", "");
+        map.put("school.schoolName", "学校名称");
+        map.put("school.address", "学校地址");
+        map.put("school.schoolMaster", "");
+        map.put("school.schoolMaster.name", "校长姓名");
+        map.put("school.schoolMaster.sex", "校长性别");
+        map.put("name", "姓名String");
 //        sheetconfig.setFieldNameMap(map);
         List<Student> destList;
-        destList =  ExcelUtils.readFromExcel(srcFileName,Student.class,sheetconfig,errorMsgs);
-        for(ErrorMessage errorMessage:errorMsgs) {
-            System.out.println("行："+errorMessage.getRow()+errorMessage.getMsg().toString());
+        destList = ExcelUtils.readFromExcel(srcFileName, Student.class, sheetconfig, errorMsgs);
+        for (ErrorMessage errorMessage : errorMsgs) {
+            System.out.println("行：" + errorMessage.getRow() + errorMessage.getMsg().toString());
         }
-        for(Student student:destList){
+        for (Student student : destList) {
             System.out.println(student.toString());
 
         }
-        List<StudentT<Person,School>> studentTS;
-        TypeReference<StudentT<Person,School>> typeReference = new TypeReference<StudentT<Person,School>>(){};
-        studentTS =ExcelUtils.readFromExcel(srcFileName,typeReference,sheetconfig,errorMsgs);
-        for(StudentT studentT:studentTS){
-            if(studentT.getVobj()!=null) {
+        JSONArray errorJson = new JSONArray();
+        destList = ExcelUtils.readFromExcel(srcFileName, Student.class, sheetconfig, errorJson);
+        System.out.println(errorJson.toString());
+        List<StudentT<Person, School>> studentTS;
+        TypeReference<StudentT<Person, School>> typeReference = new TypeReference<StudentT<Person, School>>() {
+        };
+        studentTS = ExcelUtils.readFromExcel(srcFileName, typeReference, sheetconfig, errorMsgs);
+        for (StudentT studentT : studentTS) {
+            if (studentT.getVobj() != null) {
                 System.out.println(studentT.getVobj().toString());
             }
-            if(studentT.getObj()!=null) {
+            if (studentT.getObj() != null) {
                 System.out.println(studentT.getObj().toString());
             }
 
@@ -281,12 +293,20 @@ public class ExcelUtilsTest {
     }
 
     @Test
-    public  void testFieldsType() throws Exception{
+    public void testReadExcelToJson() throws Exception {
+        JSONArray data;
+        String srcFileName = getSystemPath() + "/s2.xlsx";
+        data = ExcelUtils.readFromExcel(srcFileName, null);
+        System.out.println(data.toString());
+    }
 
-        StudentT<Student,Person> s = new StudentT<>();
+    @Test
+    public void testFieldsType() throws Exception {
+
+        StudentT<Student, Person> s = new StudentT<>();
         Field[] fields;
         fields = ExcelReflectUtils.getClassAllDeclaredFields(StudentT.class);
-        for (Field field:fields) {
+        for (Field field : fields) {
             if (field.getType().equals(Integer.class)) {
                 System.out.println(field.getName() + " Class is :" + field.getType().getName()
                         + ", Declaring Class: " + field.getDeclaringClass().getName()
@@ -303,12 +323,12 @@ public class ExcelUtilsTest {
             field.setAccessible(true);
             Type t = field.getGenericType();
 
-            if( t instanceof ParameterizedType){
-                Class c = (Class<?>)((ParameterizedType)t).getActualTypeArguments()[0];
+            if (t instanceof ParameterizedType) {
+                Class c = (Class<?>) ((ParameterizedType) t).getActualTypeArguments()[0];
                 System.out.println(c.getName());
             }
             Object value = field.get(s);
-            if (value instanceof Integer){
+            if (value instanceof Integer) {
                 System.out.println(field.getName() + " Class is :" + field.getType().getName()
                         + ", Declaring Class: " + field.getDeclaringClass().getName()
                         + ", GetGenericType: " + field.getGenericType().getTypeName());
@@ -316,17 +336,19 @@ public class ExcelUtilsTest {
             }
         }
     }
+
     @Test
     @SuppressWarnings("unchecked")
-    public  void testFieldsTree() throws Exception{
-        TypeReference<StudentT<Student,Person>> typeReference = new TypeReference<StudentT<Student,Person>>(){};
+    public void testFieldsTree() throws Exception {
+        TypeReference<StudentT<Student, Person>> typeReference = new TypeReference<StudentT<Student, Person>>() {
+        };
 //        TypeReference<Student> typeReference = new TypeReference<Student>(){};
         FieldTree root;
-        root =ExcelReflectUtils.makeFieldTree(typeReference,null);
+        root = ExcelReflectUtils.makeFieldTree(typeReference, null);
         StringBuilder sb = new StringBuilder();
-        ExcelReflectUtils.printTree(root,sb);
-        StudentT<Student,Person> st = (StudentT<Student,Person>)root.getFieldType().newInstance();
-        StudentT<Student,Person> st1 = new StudentT<>();
+        ExcelReflectUtils.printTree(root, sb);
+        StudentT<Student, Person> st = (StudentT<Student, Person>) root.getFieldType().newInstance();
+        StudentT<Student, Person> st1 = new StudentT<>();
         System.out.println(sb.toString());
         System.out.println("--------------------------------------------------------");
 /*
