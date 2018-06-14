@@ -724,8 +724,8 @@ public class SheetData<T> {
                 if (HSSFDateUtil.isCellDateFormatted(cell)) {
                     value = DateUtil.getJavaDate(cell.getNumericCellValue());
                 } else {
-                    DecimalFormat df = new DecimalFormat("0");
-                    value = df.format(cell.getNumericCellValue());
+                    DecimalFormat df = new DecimalFormat();
+                    value = df.format(cell.getNumericCellValue()).replaceAll(",","");
                 }
                 break;
             case XSSFCell.CELL_TYPE_STRING:
