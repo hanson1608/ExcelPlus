@@ -735,7 +735,8 @@ public class SheetData<T> {
                 value = cell.getErrorCellValue();
                 break;
             case XSSFCell.CELL_TYPE_FORMULA:
-                value = cell.getCellFormula();
+                DecimalFormat df = new DecimalFormat();
+                value = df.format(cell.getNumericCellValue()).replaceAll(",","");
                 break;
             case XSSFCell.CELL_TYPE_BLANK:
             default:
